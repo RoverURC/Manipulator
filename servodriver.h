@@ -6,7 +6,7 @@
 #include <bcm2835.h>
 #include <stdio.h>
 #include <stdint.h>
-
+#include <limits>
 class ServoDriver : public QObject
 {
     Q_OBJECT
@@ -19,12 +19,10 @@ public:
     void driverInit();
 
     //sends desired duty cycle to desired actuator
-    void servoMove(quint8 channel, quint8 angle);
+    void servoMove(quint8 channel, quint16 dutyCycle);
 
 signals:
-    
-public slots:
-    void interpretChangedRegister(int index, quint16 value);
+
 
 private:
     //driver address - I2C bus

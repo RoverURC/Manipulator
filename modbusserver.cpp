@@ -35,8 +35,9 @@ void ModbusServer::newConnection(){
     connect(mySocket, SIGNAL(readyRead()), this, SLOT(readDataAndRespond()));
   }
   else{
-    mySocket->deleteLater();
+    //mySocket->deleteLater();
     mySocket = myServer->nextPendingConnection();
+     connect(mySocket, SIGNAL(readyRead()), this, SLOT(readDataAndRespond()));
   }
 }
 
@@ -180,6 +181,7 @@ bool ModbusServer::proceedData(){
       for(int i=0 ; i<quantityOfRegisters ; i++){
         getQInt16(byteArrayInput, (13+2*i), value);
         holdingRegisters[startingAdress+i]=value;
+        emit registerChanged(startingAdress+i, value);
       }
 
       char temp = 0;
@@ -216,11 +218,11 @@ bool ModbusServer::proceedData(){
       quint16 value;
       getQInt16(byteArrayInput, 10, value);
       holdingRegisters[index]=value;
-
+      emit registerChanged(index, value);
       formatOutputHeader(6);
       for(int i=7 ; i<12 ; i++)
         byteArrayOutput.push_back(byteArrayInput[i]);
-      emit registerChanged(index, value);
+
       return true;
     }
     default:{

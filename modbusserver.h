@@ -25,7 +25,7 @@ class ModbusServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit ModbusServer(int modbusPort=502, QObject *parent = 0);
+    explicit ModbusServer(int modbusPort=1502, QObject *parent = 0);
     ~ModbusServer();
 
     bool startListening();
@@ -35,7 +35,6 @@ public:
 
 signals:
     void registerChanged(int index, quint16 value);
-public slots:
 private slots:
     void newConnection();
     void readDataAndRespond();
@@ -43,7 +42,6 @@ private slots:
 private:
     QTcpServer *myServer;
     QTcpSocket *mySocket;
-    int modbusPort;
 
     QByteArray byteArrayInput;
     QByteArray byteArrayOutput;
@@ -60,6 +58,9 @@ private:
     bool proceedData();
     bool formatOutputHeader(quint16 lenght);
 
+protected:
+
+    int modbusPort;
     void readHoldingRegister();
     void writeSingleRegister();
     void writeMultipleRegisters();
