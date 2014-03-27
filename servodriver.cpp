@@ -39,13 +39,13 @@ void ServoDriver::driverInit(){
 }
 
 void ServoDriver::servoMove(quint8 channel, quint16 dutyCycle){
-
+  qDebug()<<"dutyCycle"<<dutyCycle;
     //Convert value to percent
-    dutyCycle = (float)dutyCycle/std::numeric_limits<quint16>::max();
-    dutyCycle = dutyCycle * 100;
+    dutyCycle = (float)dutyCycle/std::numeric_limits<quint16>::max()*100;
+    qDebug()<<"dutyCycle"<<dutyCycle;
     //Then convert percent to code
     dutyCycle = dutyCycleCalc(dutyCycle);
-
+  qDebug()<<"dutyCycle"<<dutyCycle;
     qDebug()<<"dutyCycle"<<dutyCycle/40.96;
     //Format frame
     char bufChannel[5] = {(char)(6+channel*4), (char)0x00, (char)0x00,
