@@ -3,7 +3,7 @@
 ModbusServer::ModbusServer(int modbusPort, QObject *parent) :
   QObject(parent)
 {
-  mySocket = NULL;
+  mySocket = new QTcpSocket(this);
   myServer = new QTcpServer(this);
   this->modbusPort = modbusPort;
   holdingRegistersSize = 127;
@@ -20,29 +20,21 @@ ModbusServer::~ModbusServer(){
 }
 
 bool ModbusServer::startListening(){
-    qDebug()<<"Is listening";
-  if(myServer == NULL)
-    return false;
+  qDebug()<<"Is listening";
   if(!myServer->listen(QHostAddress::Any, modbusPort))
     return false;
 
   return true;
 }
 void ModbusServer::newConnection(){
-    qDebug()<<"New conection";
-  if(mySocket == NULL){
-    mySocket = myServer->nextPendingConnection();
-    connect(mySocket, SIGNAL(readyRead()), this, SLOT(readDataAndRespond()));
-  }
-  else{
-    //mySocket->deleteLater();
-    mySocket = myServer->nextPendingConnection();
-     connect(mySocket, SIGNAL(readyRead()), this, SLOT(readDataAndRespond()));
-  }
+  qDebug()<<"New conection";
+  mySocket->deleteLater();
+  mySocket = myServer->nextPendingConnection();
+  connect(mySocket, SIGNAL(readyRead()), this, SLOT(readDataAndRespond()));
 }
 
 void ModbusServer::readDataAndRespond(){
-    qDebug()<<"new data";
+  qDebug()<<"New data";
   byteArrayInput.clear();
   byteArrayInput = mySocket->readAll();
   proceedData();

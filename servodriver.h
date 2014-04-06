@@ -19,7 +19,7 @@ public:
     void driverInit();
 
     //sends desired duty cycle to desired actuator
-    void servoMove(quint8 channel, quint16 dutyCycle);
+    void servoMove(quint8 channel, quint16 inputDutyCycle);
 
 signals:
 
@@ -28,7 +28,7 @@ private:
     //driver address - I2C bus
     quint8 driver_I2C_address;
 
-    quint16 dutyCycleCalc(quint8 value);
+    quint32 servoCurrentValue[5];
 
 };
 #endif // SERVODRIVER_H
