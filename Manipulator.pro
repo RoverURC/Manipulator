@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     modbusserver.cpp \
     manipulator.cpp \
     servodriver.cpp \
-    bcm2835.cpp
+    bcm2835.cpp \
+    motor.cpp
 
 HEADERS += \
     modbusserver.h \
@@ -27,4 +28,5 @@ HEADERS += \
     manipulator.h \
     servodriver.h \
     codes.h \
-    bcm2835.h
+    bcm2835.h \
+    motor.h
