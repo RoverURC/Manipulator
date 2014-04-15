@@ -2,6 +2,8 @@
 #define MANIPULATOR_H
 #include <modbusserver.h>
 #include <servodriver.h>
+#include <motor.h>
+
 class Manipulator : public ModbusServer
 {
   Q_OBJECT
@@ -14,6 +16,7 @@ signals:
 
 private:
     ServoDriver *myServoDriver;
+    Motor *myMotorDriver;
 };
 
 #endif // MANIPULATOR_H
