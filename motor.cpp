@@ -3,32 +3,41 @@
 #include <QDebug>
 
 Motor::Motor(QObject *parent) :
-  QObject(parent), inA(false), inB(false)
+  QObject(parent)
 {
   motorInit();
+
+  bcm2835_gpio_fsel(RPI_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_11, BCM2835_GPIO_FSEL_OUTP);
+
 }
 
 void Motor::setDirection(quint8 direction)
 {
-  if (direction == 0) //hard brake
-    {
-      inA = true; inB = true;
-    }
+  if (direction == BREAK_DIRECTION) //hard brake
+  {
 
-  else if (direction == 1) //clockwise direction
-    {
-      inA = true; inB = false;
-    }
-
-  else if (direction == 2) //counter clockwise direction
-    {
-      inA = false; inB = true;
-    }
-
+      bcm2835_gpio_set(RPI_GPIO_P1_16);
+    bcm2835_gpio_set(RPI_GPIO_P1_11);
+  }
+  else if (direction == LEFT_DIRECTION) //clockwise direction
+  {
+      qDebug()<<"TU";
+      bcm2835_gpio_clr(RPI_GPIO_P1_16);
+    bcm2835_gpio_set(RPI_GPIO_P1_11);
+  }
+  else if (direction == RIGHT_DIRECTION) //counter clockwise direction
+  {
+qDebug()<<"Tam";
+bcm2835_gpio_set(RPI_GPIO_P1_16);
+bcm2835_gpio_set(RPI_GPIO_P1_13);
+    bcm2835_gpio_clr(RPI_GPIO_P1_11);
+  }
   else //loose brake
-    {
-      inA = false; inB = false;
-    }
+  {
+      bcm2835_gpio_clr(RPI_GPIO_P1_16);
+    bcm2835_gpio_clr(RPI_GPIO_P1_11);
+  }
 }
 
 void Motor::setSpeed(quint8 pwm_value)

@@ -5,6 +5,10 @@
 #define PWM_CHANNEL 0 //kanal
 #define RANGE 256 //?? zakres pwmki?
 
+#define BREAK_DIRECTION 0
+#define LEFT_DIRECTION 1
+#define RIGHT_DIRECTION 2
+#define IDLE_DIRECTION 3
 #include <QObject>
 
 class Motor : public QObject
@@ -22,8 +26,6 @@ signals:
 public slots:
 
 private:
-    bool inA;
-    bool inB; 
 };
 
 #endif // MOTOR_H
