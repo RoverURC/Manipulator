@@ -9,23 +9,26 @@
 #define LEFT_DIRECTION 1
 #define RIGHT_DIRECTION 2
 #define IDLE_DIRECTION 3
-#include <QObject>
 
+#include <QObject>
+#include <QTimer>
 class Motor : public QObject
 {
   Q_OBJECT
 public:
   explicit Motor(QObject *parent = 0);
 
-  void motorInit();
-  void setDirection(quint8 direction);
-  void setSpeed(quint8 pwm_value);
 
-signals:
-  
 public slots:
+  void setSpeed(quint16 pwmValue);
 
+private slots:
+  void updateSpeed();
 private:
+  void setDirection(quint8 direction);
+  int actualSpeed;
+  int targetSpeed;
+  QTimer *speedRegulationTimer;
 };
 
 #endif // MOTOR_H

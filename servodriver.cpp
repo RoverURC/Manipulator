@@ -1,15 +1,30 @@
 #include "servodriver.h"
-#include <QDebug>
-#include <iostream>
+
+const int axisNumber = 4;
+
+const int servoMin[axisNumber] = { 150, 100, 100, 100};
+const int servoMax[axisNumber] = { 500, 550, 550, 550};
 
 ServoDriver::ServoDriver(quint8 address, QObject *parent) :
   QObject(parent), driver_I2C_address(address)
 {
-    driverInit();
+  driverInit();
+
+  actualPWMTable = new int[axisNumber];
+  targetPWMTable = new int[axisNumber];
+  for(int i=0;i<axisNumber;i++){
+    actualPWMTable[i] = servoMin[i]; //TO DO
+    targetPWMTable[i] = servoMin[i];
+  }
+
+  servoUpdateTimer = new QTimer(this);
+  connect(servoUpdateTimer, SIGNAL(timeout()),this,SLOT(updateServo()));
+  servoUpdateTimer->start(10);
 }
 
 ServoDriver::~ServoDriver(){
-
+  delete[] actualPWMTable;
+  delete[] targetPWMTable;
 }
 
 void ServoDriver::driverInit(){
@@ -19,8 +34,6 @@ void ServoDriver::driverInit(){
     char buf4[2] = {(char)MODE1, (char)0xA1};
     char buf5[2] = {(char)MODE2, (char)0x04};
 
-
-    if(bcm2835_init()) qDebug()<<"GOOD" ; //if error initializing bcm2835 -> exiting program
     bcm2835_i2c_begin(); //i2c start
     bcm2835_delay(1);//ms
     bcm2835_i2c_set_baudrate(100000);
@@ -60,4 +73,33 @@ void ServoDriver::servoMove(quint8 channel, quint16 inputDutyCycle){
   bcm2835_i2c_begin();
   bcm2835_i2c_write(bufChannel, 5);
   bcm2835_i2c_end();
+}
+
+//Soft change every serverUpdateTimer timeout()
+void ServoDriver::setServoPWM(int index, quint16 value){
+  if(index<0 || index>=axisNumber)
+    return;
+
+  targetPWMTable[index] = value;
+}
+
+void ServoDriver::updateServo(){
+  for(int index = 0 ; index<axisNumber; index++){
+    if(index>=axisNumber || index<0)
+      return;
+
+    if(actualPWMTable[index]>targetPWMTable[index] && actualPWMTable[index]>servoMin[index]){
+      actualPWMTable[index] --;
+    }
+    if(actualPWMTable[index]<targetPWMTable[index] && actualPWMTable[index]<servoMax[index]){
+      actualPWMTable[index] ++;
+    }
+    if(index == 0){
+      servoMove(0, actualPWMTable[0]);
+      servoMove(1, servoMax[0]+servoMin[0]-actualPWMTable[0]);
+    }
+    else{
+      servoMove(index+1, actualPWMTable[index]);
+    }
+  }
 }

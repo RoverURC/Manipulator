@@ -4,6 +4,9 @@
 #include <modbusserver.h>
 #include <servodriver.h>
 #include <motor.h>
+#include <ledindicator.h>
+#include <dynamixelservo.h>
+#include <QextSerialPort>
 #define asd 5
 class Manipulator : public ModbusServer
 {
@@ -13,13 +16,14 @@ public:
 
 public slots:
     void interpretChangedRegister(int index, quint16 value);
-    void updateServo();
 signals:
 
 private:
+    QextSerialPort *myExtSerialPort;
+    DynamixelServo *myDynamixServo;
+    LedIndicator *myLedIndicator;
     ServoDriver *myServoDriver;
     Motor *myMotorDriver;
-    int *servoPWMTable;
     QTimer *servoUpdateTimer;
 };
 

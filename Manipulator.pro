@@ -20,7 +20,9 @@ SOURCES += main.cpp \
     manipulator.cpp \
     servodriver.cpp \
     bcm2835.cpp \
-    motor.cpp
+    motor.cpp \
+    dynamixelservo.cpp \
+    ledindicator.cpp
 
 HEADERS += \
     modbusserver.h \
@@ -29,4 +31,6 @@ HEADERS += \
     servodriver.h \
     codes.h \
     bcm2835.h \
-    motor.h
+    motor.h \
+    dynamixelservo.h \
+    ledindicator.h
