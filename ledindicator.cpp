@@ -1,5 +1,5 @@
 #include "ledindicator.h"
-#define LED_PIN RPI_GPIO_P1_16
+#define LED_PIN RPI_GPIO_P1_18
 #define ON true
 #define OFF false
 LedIndicator::LedIndicator(QObject *parent) :
@@ -12,20 +12,20 @@ LedIndicator::LedIndicator(QObject *parent) :
   connect(timer,SIGNAL(timeout()),this,SLOT(blink()));
 }
 
-LedIndicator::startBlinking(int ms){
+void LedIndicator::startBlinking(int ms){
   timer->start(ms);
 }
-LedIndicator::stopBlinking(){
+void LedIndicator::stopBlinking(){
   timer->stop();
 }
 
-LedIndicator::blink(){
+void LedIndicator::blink(){
   if(state == ON){
     state = OFF;
-    bcm2835_gpio_clr(RPI_GPIO_P1_16);
+    bcm2835_gpio_clr(LED_PIN);
   }
-  if(state == OFF){
+  else if(state == OFF){
     state = ON;
-    bcm2835_gpio_set(RPI_GPIO_P1_11);
+    bcm2835_gpio_set(LED_PIN);
   }
 }

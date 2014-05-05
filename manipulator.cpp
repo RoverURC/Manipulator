@@ -14,9 +14,24 @@ Manipulator::Manipulator(int modbusPort, QObject *parent ):
   myMotorDriver = new Motor();
   myLedIndicator = new LedIndicator();
 
-  myExtSerialPort = new QextSerialPort();
-  myDynamixServo = new DynamixelServo(1,myExtSerialPort,this);
-  myDynamixServo->setSpeed(400);
+  myExtSerialPort= new QextSerialPort("/dev/ttyAMA0");
+  myExtSerialPort->setBaudRate(BAUD9600);
+  myExtSerialPort->setFlowControl(FLOW_OFF);
+  myExtSerialPort->setParity(PAR_NONE);
+  myExtSerialPort->setDataBits(DATA_8);
+  myExtSerialPort->setStopBits(STOP_1);
+  //port->setQueryMode(QextSerialPort::Polling);
+  myExtSerialPort->close();
+  if (myExtSerialPort->open(QIODevice::ReadWrite) == true){
+      qDebug("port is opened");
+  }
+  else{
+      qDebug("port is not open");
+  }
+  myDynamixServo = new DynamixelServo(1,myExtSerialPort);
+  myDynamixServo->setStatusReturnPackage(2, true);
+  myDynamixServo->setCCWAngleLimit(300);
+  //myDynamixServo->setSpeed(50,true);
 
   myLedIndicator->startBlinking(500);
   connect(this,SIGNAL(registerChanged(int,quint16)),this,SLOT(interpretChangedRegister(int,quint16)));
@@ -27,8 +42,10 @@ void Manipulator::interpretChangedRegister(int index, quint16 value){
     myServoDriver->setServoPWM(index,value);
   if(index==4)
     myMotorDriver->setSpeed(value);
-  if(index ==5 )
-    myDynamixServo->setAngle(value);
+  if(index ==5 ){
+      qDebug()<<"Index 5";
+    myDynamixServo->setAngle(value,true);
+    }
 }
 
 

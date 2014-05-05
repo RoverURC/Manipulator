@@ -6,7 +6,7 @@
 #include <motor.h>
 #include <ledindicator.h>
 #include <dynamixelservo.h>
-#include <QextSerialPort>
+#include <qextserialport.h>
 #define asd 5
 class Manipulator : public ModbusServer
 {

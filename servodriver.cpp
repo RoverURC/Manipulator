@@ -1,9 +1,9 @@
 #include "servodriver.h"
 
 const int axisNumber = 4;
-
+const int servoInit[axisNumber] = { 250, 250, 250, 250};
 const int servoMin[axisNumber] = { 150, 100, 100, 100};
-const int servoMax[axisNumber] = { 500, 550, 550, 550};
+const int servoMax[axisNumber] = { 500, 380, 475, 550};
 
 ServoDriver::ServoDriver(quint8 address, QObject *parent) :
   QObject(parent), driver_I2C_address(address)
@@ -13,13 +13,13 @@ ServoDriver::ServoDriver(quint8 address, QObject *parent) :
   actualPWMTable = new int[axisNumber];
   targetPWMTable = new int[axisNumber];
   for(int i=0;i<axisNumber;i++){
-    actualPWMTable[i] = servoMin[i]; //TO DO
-    targetPWMTable[i] = servoMin[i];
+    actualPWMTable[i] = servoInit[i]; //TO DO
+    targetPWMTable[i] = servoInit[i];
   }
 
   servoUpdateTimer = new QTimer(this);
   connect(servoUpdateTimer, SIGNAL(timeout()),this,SLOT(updateServo()));
-  servoUpdateTimer->start(10);
+  servoUpdateTimer->start(1);
 }
 
 ServoDriver::~ServoDriver(){
@@ -90,9 +90,11 @@ void ServoDriver::updateServo(){
 
     if(actualPWMTable[index]>targetPWMTable[index] && actualPWMTable[index]>servoMin[index]){
       actualPWMTable[index] --;
+      //actualPWMTable[index] --;
     }
     if(actualPWMTable[index]<targetPWMTable[index] && actualPWMTable[index]<servoMax[index]){
       actualPWMTable[index] ++;
+      //actualPWMTable[index] ++;
     }
     if(index == 0){
       servoMove(0, actualPWMTable[0]);

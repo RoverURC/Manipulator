@@ -16,8 +16,8 @@ signals:
 public slots:
   void startBlinking(int ms);
   void stopBlinking();
-private:
   void blink();
+private:
   bool state;
   QTimer *timer;
 };

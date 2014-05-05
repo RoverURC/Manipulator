@@ -2,7 +2,7 @@
 #define DYNAMIXELSERVO_H
 
 #include <QObject>
-//#include <qextserialport.h>
+#include <qextserialport.h>
 #include <QByteArray>
 #include <QBitArray>
 #include <QTimer>

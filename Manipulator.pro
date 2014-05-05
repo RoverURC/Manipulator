@@ -34,3 +34,6 @@ HEADERS += \
     motor.h \
     dynamixelservo.h \
     ledindicator.h
+
+include(/home/pi/ExtSerialPort/qextserialport.pri)
+CONFIG += extserialport
