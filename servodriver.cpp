@@ -1,9 +1,11 @@
 #include "servodriver.h"
 
 const int axisNumber = 4;
-const int servoInit[axisNumber] = { 250, 250, 250, 250};
-const int servoMin[axisNumber] = { 150, 100, 100, 100};
-const int servoMax[axisNumber] = { 500, 380, 475, 550};
+const int servoInit[axisNumber] = { 256, 256, 256, 256};
+const int servoMin[axisNumber] = { 256, 140, 256, 256};
+const int servoMax[axisNumber] = { 512, 512, 512, 512};
+
+const int servoDumper = 2; //Increase/Decrease actual value by servospeed every timeout
 
 ServoDriver::ServoDriver(quint8 address, QObject *parent) :
   QObject(parent), driver_I2C_address(address)
@@ -13,7 +15,7 @@ ServoDriver::ServoDriver(quint8 address, QObject *parent) :
   actualPWMTable = new int[axisNumber];
   targetPWMTable = new int[axisNumber];
   for(int i=0;i<axisNumber;i++){
-    actualPWMTable[i] = servoInit[i]; //TO DO
+    actualPWMTable[i] = servoInit[i];
     targetPWMTable[i] = servoInit[i];
   }
 
@@ -29,7 +31,7 @@ ServoDriver::~ServoDriver(){
 
 void ServoDriver::driverInit(){
     char buf1[2] = {(char)MODE1, (char)0x31};
-    char buf2[2] = {(char)PRE_SCALE, (char)122};
+    char buf2[2] = {(char)PRE_SCALE, (char)104};
     char buf3[2] = {(char)MODE1, (char)0x21};
     char buf4[2] = {(char)MODE1, (char)0xA1};
     char buf5[2] = {(char)MODE2, (char)0x04};
@@ -89,12 +91,18 @@ void ServoDriver::updateServo(){
       return;
 
     if(actualPWMTable[index]>targetPWMTable[index] && actualPWMTable[index]>servoMin[index]){
-      actualPWMTable[index] --;
-      //actualPWMTable[index] --;
+        actualPWMTable[index] = actualPWMTable[index] - servoDumper;
+      if(actualPWMTable[index]<targetPWMTable[index])
+        actualPWMTable[index]= targetPWMTable[index];
+      if(actualPWMTable[index]<servoMin[index])
+        actualPWMTable[index]=servoMin[index];
     }
     if(actualPWMTable[index]<targetPWMTable[index] && actualPWMTable[index]<servoMax[index]){
-      actualPWMTable[index] ++;
-      //actualPWMTable[index] ++;
+        actualPWMTable[index] = actualPWMTable[index] + servoDumper;
+      if(actualPWMTable[index]>targetPWMTable[index])
+        actualPWMTable[index]=targetPWMTable[index];
+      if(actualPWMTable[index]>servoMax[index])
+        actualPWMTable[index]=servoMax[index];
     }
     if(index == 0){
       servoMove(0, actualPWMTable[0]);

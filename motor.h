@@ -2,6 +2,7 @@
 #define MOTOR_H
 
 #define PWM_PIN RPI_GPIO_P1_12//pin pwm, jedyny na RPi
+
 #define PWM_CHANNEL 0 //kanal
 #define RANGE 256 //?? zakres pwmki?
 
@@ -12,6 +13,7 @@
 
 #include <QObject>
 #include <QTimer>
+
 class Motor : public QObject
 {
   Q_OBJECT
@@ -20,7 +22,7 @@ public:
 
 
 public slots:
-  void setSpeed(quint16 pwmValue);
+  void setSpeed(qint16 pwmValue);
 
 private slots:
   void updateSpeed();

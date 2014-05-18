@@ -31,20 +31,21 @@ Manipulator::Manipulator(int modbusPort, QObject *parent ):
   myDynamixServo = new DynamixelServo(1,myExtSerialPort);
   myDynamixServo->setStatusReturnPackage(2, true);
   myDynamixServo->setCCWAngleLimit(300);
-  //myDynamixServo->setSpeed(50,true);
+  myDynamixServo->setSpeed(20,true);
 
-  myLedIndicator->startBlinking(500);
+  myLedIndicator->startBlinking(250);
   connect(this,SIGNAL(registerChanged(int,quint16)),this,SLOT(interpretChangedRegister(int,quint16)));
 
 }
 void Manipulator::interpretChangedRegister(int index, quint16 value){
   if(index>=0 && index<=3)
     myServoDriver->setServoPWM(index,value);
-  if(index==4)
-    myMotorDriver->setSpeed(value);
-  if(index ==5 ){
-      qDebug()<<"Index 5";
+  if(index==4){
     myDynamixServo->setAngle(value,true);
+    }
+
+  if(index ==5 ){
+     myMotorDriver->setSpeed(value);
     }
 }
 
